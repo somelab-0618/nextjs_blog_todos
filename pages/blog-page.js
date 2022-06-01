@@ -1,9 +1,16 @@
 import Layout from '../components/Layout';
 import Link from 'next/link';
+import { getAllPostData } from '../lib/posts';
+import Post from '../components/Post';
 
-export default function BlogPage() {
+// build時にgetStaticPropsから引数が渡ってくる
+export default function BlogPage({ filteredPosts }) {
   return (
     <Layout title='Blog page'>
+      <ul>
+        {filteredPosts &&
+          filteredPosts.map((post) => <Post key={post.id} post={post} />)}
+      </ul>
       <Link href='/main-page'>
         <div className='flex cursor-pointer mt-12'>
           <svg
@@ -25,4 +32,12 @@ export default function BlogPage() {
       </Link>
     </Layout>
   );
+}
+
+// build時に呼び出される処理
+export async function getStaticProps() {
+  const filteredPosts = await getAllPostData();
+  return {
+    props: { filteredPosts },
+  };
 }
